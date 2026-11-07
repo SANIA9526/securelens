@@ -4,7 +4,7 @@
 
 ![SecureLens scanning a vulnerable Flask app](docs/screenshot.png)
 
-[![CI](https://github.com/YOUR_USERNAME/securelens/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/securelens/actions)
+[![CI](https://github.com/SANIA9526/securelens/actions/workflows/ci.yml/badge.svg)](https://github.com/SANIA9526/securelens/actions)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -35,7 +35,7 @@ The static layer runs first and its findings are sent to Claude along with line-
 ## Quick start
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/securelens.git
+git clone https://github.com/SANIA9526/securelens.git
 cd securelens
 python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
