@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Unit and API tests
+        run: pytest -v
+
+  self-scan:
+    # SecureLens scans its own source code on every push. The build fails on any
+    # medium-or-worse finding, so the tool is held to the standard it enforces.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Scan own source
+        run: python cli.py app/ cli.py --fail-on medium
+      - name: Confirm the scanner still catches the demo vulnerabilities
+        run: |
+          if python cli.py examples/ --fail-on high; then
+            echo "Expected findings in examples/ but the scan passed"; exit 1
+          fi

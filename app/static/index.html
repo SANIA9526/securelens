@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SecureLens</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='13' cy='13' r='9' fill='none' stroke='%231B2430' stroke-width='3'/%3E%3Cpath d='M20 20l8 8' stroke='%231B2430' stroke-width='3.5' stroke-linecap='round'/%3E%3Cpath d='M9 13h8' stroke='%23B4122B' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><circle cx="13" cy="13" r="9" fill="none" stroke="currentColor" stroke-width="3"/><path d="M20 20l8 8" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M9 13h8" stroke="var(--critical)" stroke-width="3" stroke-linecap="round"/></svg>
+    <h1>SecureLens</h1>
+  </div>
+  <p class="tagline">Find security bugs in your code, see how they'd be exploited, and get the fix.</p>
+  <span id="ai-status" class="status" role="status">Checking AI…</span>
+</header>
+
+<main class="layout">
+  <section class="panel editor-panel" aria-label="Code">
+    <div class="toolbar">
+      <select id="language" aria-label="Language">
+        <option value="">Detect language</option>
+        <option value="python">Python</option>
+        <option value="javascript">JavaScript</option>
+        <option value="typescript">TypeScript</option>
+        <option value="php">PHP</option>
+        <option value="java">Java</option>
+      </select>
+      <div class="toolbar-group">
+        <button type="button" class="ghost" id="load-py">Python sample</button>
+        <button type="button" class="ghost" id="load-js">JavaScript sample</button>
+        <label class="ghost file-btn">Open file<input type="file" id="file" accept=".py,.js,.jsx,.mjs,.ts,.tsx,.php,.java" hidden></label>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div id="gutter" class="gutter" aria-hidden="true"></div>
+      <textarea id="code" spellcheck="false" autocomplete="off" aria-label="Source code"
+        placeholder="Paste code here, open a file, or load a sample."></textarea>
+      <div id="marked" class="marked" hidden></div>
+    </div>
+
+    <div class="actions">
+      <label class="check"><input type="checkbox" id="use-ai" checked> Review with Claude</label>
+      <button type="button" id="edit" class="ghost" hidden>Edit code</button>
+      <button type="button" id="scan" class="primary">Scan code</button>
+    </div>
+  </section>
+
+  <section class="panel results-panel" aria-label="Results" aria-live="polite">
+    <div id="empty" class="empty">
+      <h2>No scan yet</h2>
+      <p>Load a sample and press <strong>Scan code</strong>. SecureLens checks for injection, hard-coded secrets, weak crypto, unsafe deserialization and more, then asks Claude to verify each finding, explain the attack and write the fix.</p>
+    </div>
+
+    <div id="loading" class="empty" hidden>
+      <div class="scanline" aria-hidden="true"></div>
+      <h2>Scanning</h2>
+      <p id="loading-text">Running static rules…</p>
+    </div>
+
+    <div id="results" hidden>
+      <div class="score-row">
+        <div class="score">
+          <span id="risk" class="risk-num">0</span>
+          <span class="risk-label">risk score<br>out of 100</span>
+        </div>
+        <ul id="counts" class="counts"></ul>
+      </div>
+      <p id="assessment" class="assessment"></p>
+      <p id="mode-note" class="mode-note"></p>
+
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-tab="findings">Findings</button>
+        <button role="tab" aria-selected="false" data-tab="patched" id="tab-patched">Patched code</button>
+      </div>
+      <ol id="findings" class="findings" data-pane="findings"></ol>
+      <div data-pane="patched" hidden>
+        <div class="patched-head">
+          <span>Claude's fixed version of the whole file</span>
+          <button type="button" class="ghost" id="copy-patch">Copy</button>
+        </div>
+        <pre id="patched" class="code-block"></pre>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="history panel" aria-label="Scan history">
+  <div class="history-head">
+    <h2>Recent scans</h2>
+    <span id="stats" class="muted"></span>
+  </div>
+  <table>
+    <thead><tr><th>#</th><th>File</th><th>Language</th><th>Findings</th><th>Risk</th><th>Review</th><th>When</th></tr></thead>
+    <tbody id="history"></tbody>
+  </table>
+</section>
+
+<footer class="foot">Static analysis + Claude · <a href="/docs">API docs</a></footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
